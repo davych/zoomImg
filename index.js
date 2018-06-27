@@ -115,14 +115,13 @@ zoomIndex.prototype.setEventHandler = function() {
         if(curTop < self.target.y) curTop = self.target.y
         if(curTop > (self.target.y + self.targetStyle.h - self.coverHeight)) curTop = self.target.y + self.targetStyle.h - self.coverHeight
         self.setStyle(self.coverSpan, {left: curLeft + 'px', top: curTop + 'px', display: 'inline-block'});
-
         // 计算 w和h的比列
         let wRatio = self.targetStyle.w/self.srcWidth;
         let hRatio = self.targetStyle.h/self.srcHeight;
         let mapImgLeft = (curLeft - self.target.x)/wRatio;
         let mapImgTop = (curTop - self.target.y)/hRatio;
         self.setStyle(self.mapImg, {left: -mapImgLeft + 'px', top: -mapImgTop + 'px'});
-        self.setStyle(self.mapSpan, {top: self.target.y + 'px', display: 'inline-block'});
+        self.setStyle(self.mapSpan, {top: self.target.y + 'px', left: self.target.x + self.targetStyle.w + 20 + 'px', display: 'inline-block'});
     }
     this.target.onmouseout = function(e) {
         self.setStyle(self.coverSpan, {display: 'none'});
