@@ -104,10 +104,14 @@ zoomIndex.prototype.setMapBox = function() {
     this.imgStyle.height = this.srcHeight + 'px';
     this.setStyle(this.mapImg, this.imgStyle);
 }
+zoomIndex.prototype.fresh = function(options) {
+    Object.assign(this.options, options);
+}
 zoomIndex.prototype.setEventHandler = function() {
     // 鼠标移动
     var self = this;
     this.target.onmousemove = function(e) {
+        self.mapImg.src = self.options.srcImg;
         var curLeft = e.x - self.options.coverWidth/2;
         var curTop = e.y - self.coverHeight/2;
         if(curLeft < self.target.x) curLeft = self.target.x

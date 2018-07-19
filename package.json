@@ -1,6 +1,6 @@
 {
   "name": "zoomimg",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "index.min.js",
   "scripts": {
@@ -13,5 +13,7 @@
   "author": "davy",
   "license": "ISC",
   "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^3.0.0"
   }
 }
