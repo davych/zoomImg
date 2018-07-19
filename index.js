@@ -34,10 +34,10 @@ function zoomIndex(target, options) {
 
 zoomIndex.prototype.init = function(target) {
     this.target = target;
-    // 
+    // document.scrollingElement.scrollTop
     this.targetPosition = {
         x: this.target.x,
-        y: this.target.y
+        y: this.getTargetY()
     }
     this.targetStyle = {
         w: this.target.width,
@@ -53,6 +53,9 @@ zoomIndex.prototype.init = function(target) {
     this.setEventHandler();
 
     return this;
+}
+zoomIndex.prototype.getTargetY = function() {
+    return document.scrollingElement?this.target.y-document.scrollingElement.scrollTop:this.target.y
 }
 zoomIndex.prototype.setCoverBox = function() {
     // 根据target 计算 coverHeight
@@ -71,6 +74,7 @@ zoomIndex.prototype.setCoverBox = function() {
     };
     this.coverSpan = document.createElement("span"); 
     document.body.append(this.coverSpan);
+    // this.target.parentNode.append(this.coverSpan);
     this.setStyle(this.coverSpan, this.coverStyle);
 }
 zoomIndex.prototype.setMapBox = function() {
@@ -116,16 +120,16 @@ zoomIndex.prototype.setEventHandler = function() {
         var curTop = e.y - self.coverHeight/2;
         if(curLeft < self.target.x) curLeft = self.target.x
         if(curLeft > (self.target.x + self.targetStyle.w - self.options.coverWidth)) curLeft = self.target.x + self.targetStyle.w - self.options.coverWidth;
-        if(curTop < self.target.y) curTop = self.target.y
-        if(curTop > (self.target.y + self.targetStyle.h - self.coverHeight)) curTop = self.target.y + self.targetStyle.h - self.coverHeight
+        if(curTop < self.getTargetY()) curTop = self.getTargetY()
+        if(curTop > (self.getTargetY() + self.targetStyle.h - self.coverHeight)) curTop = self.getTargetY() + self.targetStyle.h - self.coverHeight
         self.setStyle(self.coverSpan, {left: curLeft + 'px', top: curTop + 'px', display: 'inline-block'});
         // 计算 w和h的比列
         var wRatio = self.targetStyle.w/self.srcWidth;
         var hRatio = self.targetStyle.h/self.srcHeight;
         var mapImgLeft = (curLeft - self.target.x)/wRatio;
-        var mapImgTop = (curTop - self.target.y)/hRatio;
+        var mapImgTop = (curTop - self.getTargetY())/hRatio;
         self.setStyle(self.mapImg, {left: -mapImgLeft + 'px', top: -mapImgTop + 'px'});
-        self.setStyle(self.mapSpan, {top: self.target.y + 'px', left: self.target.x + self.targetStyle.w + 20 + 'px', display: 'inline-block'});
+        self.setStyle(self.mapSpan, {top: self.getTargetY() + 'px', left: self.target.x + self.targetStyle.w + 20 + 'px', display: 'inline-block'});
     }
     this.target.onmouseout = function(e) {
         self.setStyle(self.coverSpan, {display: 'none'});
