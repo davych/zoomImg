@@ -1,6 +1,6 @@
 {
   "name": "zoomimg",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "index.min.js",
   "scripts": {
@@ -11,9 +11,5 @@
     "url": "git@github.com:davych/zoomImg.git"
   },
   "author": "davy",
-  "license": "ISC",
-  "dependencies": {
-    "gulp": "^3.9.1",
-    "gulp-uglify": "^3.0.0"
-  }
+  "license": "ISC"
 }
