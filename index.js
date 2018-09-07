@@ -37,7 +37,7 @@ zoomIndex.prototype.init = function(target) {
     // document.scrollingElement.scrollTop
     this.targetPosition = {
         x: this.target.x,
-        y: this.getTargetY()
+        y: this.target.y
     }
     this.targetStyle = {
         w: this.target.width,
@@ -54,15 +54,13 @@ zoomIndex.prototype.init = function(target) {
 
     return this;
 }
-zoomIndex.prototype.getTargetY = function() {
-    return document.scrollingElement?this.target.offsetTop - document.scrollingElement.scrollTop:this.target.y
-}
+// zoomIndex.prototype.getTargetY = function() {
+//     return document.scrollingElement?this.target.offsetTop - document.scrollingElement.scrollTop:this.target.y
+// }
 zoomIndex.prototype.setCoverBox = function() {
     // 根据target 计算 coverHeight
     this.coverHeight = (this.targetStyle.h*this.options.coverWidth)/this.targetStyle.w;
     this.coverStyle = {
-        left: this.targetPosition.x + 'px', 
-        top: this.targetPosition.y + 'px', 
         display: 'none',
         width: this.options.coverWidth + 'px', 
         height: this.coverHeight + 'px', 
@@ -70,17 +68,27 @@ zoomIndex.prototype.setCoverBox = function() {
         backgroundImage:"url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAMAAABFaP0WAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAGUExURT1uzv///62t27cAAAACdFJOU/8A5bcwSgAAABBJREFUeNpiYGBkYGQECDAAAA0ABMZIs2EAAAAASUVORK5CYII=)",
         opacity: '.5',
         zIndex: this.options.coverIndex,
-        position: 'fixed'
+        position: 'absolute'
     };
     this.coverSpan = document.createElement("span"); 
-    document.body.append(this.coverSpan);
-    // this.target.parentNode.append(this.coverSpan);
+    this.insertBefore(this.coverSpan, this.target);
     this.setStyle(this.coverSpan, this.coverStyle);
+}
+zoomIndex.prototype.insertBefore = function(newDom, targetDom) {
+  var parent = targetDom.parentElement;
+  var childrens = parent.childNodes;
+  for(var i = 0; i < childrens.length; i++) {
+      var child = childrens[i];
+      if(child == targetDom) {
+        parent.insertBefore(newDom,parent.childNodes[i]);
+      }
+  }
+
 }
 zoomIndex.prototype.setMapBox = function() {
     this.mapStyle = {
         left: this.targetPosition.x + this.targetStyle.w + 20 + 'px', 
-        top: this.targetPosition.y + 'px', 
+        // top: this.targetPosition.y + 'px', 
         display: 'none',
         width: this.targetStyle.w + 'px', 
         height:  this.targetStyle.h + 'px', 
@@ -88,14 +96,14 @@ zoomIndex.prototype.setMapBox = function() {
         backgroundColor: 'red',
         overflow:'hidden',
         zIndex: this.options.mapIndex,
-        position: 'fixed'
+        position: 'absolute'
     };
     this.mapSpan = document.createElement("span"); 
-    document.body.append(this.mapSpan);
     this.setStyle(this.mapSpan, this.mapStyle);
     this.mapImg = document.createElement("img"); 
     this.mapImg.setAttribute('src', this.options.srcImg);
-    this.mapSpan.append(this.mapImg);
+    this.mapSpan.appendChild(this.mapImg);
+    this.insertBefore(this.mapSpan, this.target);
     this.imgStyle = {
         position: 'absolute',
         left: 0,
@@ -115,21 +123,22 @@ zoomIndex.prototype.setEventHandler = function() {
     // 鼠标移动
     var self = this;
     this.target.onmousemove = function(e) {
-        self.mapImg.src = self.options.srcImg;
-        var curLeft = e.x - self.options.coverWidth/2;
-        var curTop = e.y - self.coverHeight/2;
-        if(curLeft < self.target.x) curLeft = self.target.x
-        if(curLeft > (self.target.x + self.targetStyle.w - self.options.coverWidth)) curLeft = self.target.x + self.targetStyle.w - self.options.coverWidth;
-        if(curTop < self.getTargetY()) curTop = self.getTargetY()
-        if(curTop > (self.getTargetY() + self.targetStyle.h - self.coverHeight)) curTop = self.getTargetY() + self.targetStyle.h - self.coverHeight
-        self.setStyle(self.coverSpan, {left: curLeft + 'px', top: curTop + 'px', display: 'inline-block'});
+        // self.mapImg.src = self.options.srcImg;
+        var curLeft = e.x -  self.target.x - self.options.coverWidth/2;
+        if(curLeft < 0 ) curLeft = 0;
+        if(curLeft > self.targetStyle.w - self.options.coverWidth) curLeft = self.targetStyle.w - self.options.coverWidth;
+       
+        var curTop = e.y - self.target.y - self.options.coverWidth/2;
+        if(curTop < 0) curTop = 0;
+        if(curTop > self.targetStyle.h - self.options.coverWidth) curTop = self.targetStyle.h - self.options.coverWidth;
+        self.setStyle(self.coverSpan, {marginLeft: curLeft + 'px', marginTop: curTop + 'px', display: 'inline-block'});
         // 计算 w和h的比列
         var wRatio = self.targetStyle.w/self.srcWidth;
         var hRatio = self.targetStyle.h/self.srcHeight;
-        var mapImgLeft = (curLeft - self.target.x)/wRatio;
-        var mapImgTop = (curTop - self.getTargetY())/hRatio;
+        var mapImgLeft = curLeft/wRatio;
+        var mapImgTop = curTop/hRatio;
         self.setStyle(self.mapImg, {left: -mapImgLeft + 'px', top: -mapImgTop + 'px'});
-        self.setStyle(self.mapSpan, {top: self.getTargetY() + 'px', left: self.target.x + self.targetStyle.w + 20 + 'px', display: 'inline-block'});
+        self.setStyle(self.mapSpan, {display: 'block'});
     }
     this.target.onmouseout = function(e) {
         self.setStyle(self.coverSpan, {display: 'none'});
