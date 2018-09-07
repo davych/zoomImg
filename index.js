@@ -56,8 +56,8 @@ zoomIndex.prototype.init = function(target) {
 }
 zoomIndex.prototype.getTargetY = function() {
     if(!this.target.y) return this.target.pageY;
-    if(!document.scrollingElement) return this.target.y;
-    return this.target.offsetTop - document.scrollingElement.scrollTop;
+    return this.target.y;
+    // return this.target.offsetTop - document.scrollingElement.scrollTop;
 }
 zoomIndex.prototype.getTargetX = function() {
     if(!this.target.x) return this.target.pageX;
@@ -130,11 +130,13 @@ zoomIndex.prototype.setEventHandler = function() {
     var self = this;
     this.target.onmousemove = function(e) {
         // self.mapImg.src = self.options.srcImg;
-        var curLeft = e.x -  self.getTargetX() - self.options.coverWidth/2;
+        // var curLeft = e.pageX -  self.getTargetX() - self.options.coverWidth/2;
+        var curLeft = e.offsetX- self.options.coverWidth/2;
         if(curLeft < 0 ) curLeft = 0;
         if(curLeft > self.targetStyle.w - self.options.coverWidth) curLeft = self.targetStyle.w - self.options.coverWidth;
 
-        var curTop = e.y - self.getTargetY() - self.options.coverWidth/2;
+        // var curTop = e.pageY - self.getTargetY() - self.options.coverWidth/2;
+        var curTop = e.offsetY- self.options.coverWidth/2;
         if(curTop < 0) curTop = 0;
         if(curTop > self.targetStyle.h - self.options.coverWidth) curTop = self.targetStyle.h - self.options.coverWidth;
         self.setStyle(self.coverSpan, {marginLeft: curLeft + 'px', marginTop: curTop + 'px', display: 'inline-block'});
