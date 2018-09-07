@@ -55,7 +55,7 @@ zoomIndex.prototype.init = function(target) {
     return this;
 }
 zoomIndex.prototype.getTargetY = function() {
-    return document.scrollingElement?this.target.y-document.scrollingElement.scrollTop:this.target.y
+    return document.scrollingElement?this.target.offsetTop - document.scrollingElement.scrollTop:this.target.y
 }
 zoomIndex.prototype.setCoverBox = function() {
     // 根据target 计算 coverHeight
@@ -63,7 +63,7 @@ zoomIndex.prototype.setCoverBox = function() {
     this.coverStyle = {
         left: this.targetPosition.x + 'px', 
         top: this.targetPosition.y + 'px', 
-        display: 'none',
+        // display: 'none',
         width: this.options.coverWidth + 'px', 
         height: this.coverHeight + 'px', 
         pointerEvents: 'none',
@@ -132,7 +132,7 @@ zoomIndex.prototype.setEventHandler = function() {
         self.setStyle(self.mapSpan, {top: self.getTargetY() + 'px', left: self.target.x + self.targetStyle.w + 20 + 'px', display: 'inline-block'});
     }
     this.target.onmouseout = function(e) {
-        self.setStyle(self.coverSpan, {display: 'none'});
+        self.setStyle(self.coverSpan, {display: 'block'});
         self.setStyle(self.mapSpan, {display: 'none'});
     }
 }
