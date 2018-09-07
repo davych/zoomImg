@@ -63,7 +63,7 @@ zoomIndex.prototype.setCoverBox = function() {
     this.coverStyle = {
         left: this.targetPosition.x + 'px', 
         top: this.targetPosition.y + 'px', 
-        // display: 'none',
+        display: 'none',
         width: this.options.coverWidth + 'px', 
         height: this.coverHeight + 'px', 
         pointerEvents: 'none',
@@ -132,7 +132,7 @@ zoomIndex.prototype.setEventHandler = function() {
         self.setStyle(self.mapSpan, {top: self.getTargetY() + 'px', left: self.target.x + self.targetStyle.w + 20 + 'px', display: 'inline-block'});
     }
     this.target.onmouseout = function(e) {
-        self.setStyle(self.coverSpan, {display: 'block'});
+        self.setStyle(self.coverSpan, {display: 'none'});
         self.setStyle(self.mapSpan, {display: 'none'});
     }
 }
